@@ -6,10 +6,15 @@
 # This module is part of Creoleparser and is released under
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 #
-
+from __future__ import absolute_import, unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 import re
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
 import keyword
 import warnings
 import traceback
@@ -17,7 +22,7 @@ import traceback
 import genshi.builder as bldr
 from genshi.core import Stream, Markup
 
-from core import (escape_char, esc_neg_look, fragmentize,
+from .core import (escape_char, esc_neg_look, fragmentize,
                   ImplicitList, AttrDict) 
 
 BLOCK_ONLY_TAGS = ['h1','h2','h3','h4','h5','h6',
@@ -231,7 +236,7 @@ class SimpleElement(InlineElement):
 
     def __init__(self, token_dict={}):
         self.token_dict = token_dict
-        self.tokens = token_dict.keys()
+        self.tokens = list(token_dict.keys())
         super(SimpleElement,self).__init__('','')
         self.regexp = re.compile(self.re_string(),re.DOTALL)
 
@@ -304,7 +309,7 @@ class LinkElement(InlineElement):
         return r'(?P<body>.*?)(' + re.escape(self.delimiter) + '(?P<arg_string>.*?))?$'
 
     def interwikilink_re_string(self):
-        all_wikis = set(self.links_funcs.keys() + self.base_urls.keys())
+        all_wikis = set(list(self.links_funcs.keys()) + list(self.base_urls.keys()))
         wiki_id = '(?P<wiki_id>' + '|'.join(all_wikis) + ')'
         optional_spaces = ' *'
         page_name = r'(?P<page_name>\S+?( \S+?)*)' #allows any number of single spaces
@@ -344,9 +349,9 @@ class LinkElement(InlineElement):
             if link_func:
                 url = link_func(page_name)
             else:
-                url = urllib.quote(page_name.encode('utf-8'))
+                url = urllib.parse.quote(page_name.encode('utf-8'))
             if base_url:
-                url = urlparse.urljoin(base_url, url)
+                url = urllib.parse.urljoin(base_url, url)
             if class_func:
                 the_class = class_func(page_name)
         elif self.urllink_regexp.match(body):
@@ -363,10 +368,10 @@ class LinkElement(InlineElement):
             if self.path_func:
                 the_path = self.path_func(page_name)
             else:
-                the_path = urllib.quote(page_name.encode('utf-8'))
+                the_path = urllib.parse.quote(page_name.encode('utf-8'))
             if self.class_func:
                 the_class = self.class_func(page_name)
-            url = urlparse.urljoin(self.base_url, the_path)
+            url = urllib.parse.urljoin(self.base_url, the_path)
         else:
             url = None
 
@@ -461,7 +466,7 @@ class ImageElement(LinkElement):
 
         if alt is None:
             if link_type == 'external':
-                alt = urlparse.urlsplit(url).path.split('/')[-1]
+                alt = urllib.parse.urlsplit(url).path.split('/')[-1]
             else:
                 alt = body.strip()
 
@@ -541,7 +546,7 @@ class Macro(WikiElement):
     def _macro_func(self,macro_name,arg_string,body,isblock,environ):
 
         func = self.macros[macro_name]
-        arg_parser = func.func_dict.get('arg_parser') or self.arg_parser
+        arg_parser = func.__dict__.get('arg_parser') or self.arg_parser
         if arg_parser:
             pos, kw = arg_parser(arg_string)
         else:
@@ -567,7 +572,7 @@ class Macro(WikiElement):
         
         try:
             value = func(macro,environ,*pos,**kw)
-        except TypeError , detail:
+        except TypeError as detail:
             tag = isblock and 'pre' or 'code'
             e = str(detail)
             msg = re.sub(r"^\w*\(\) ", '', e)
@@ -903,9 +908,9 @@ Use of elements.InterWikiLink is depreciated.
             if link_func:
                 href = link_func(href)
             else:
-                href = urllib.quote(href.encode('utf-8'))
+                href = urllib.parse.quote(href.encode('utf-8'))
             if base_url:
-                href = urlparse.urljoin(base_url, href)
+                href = urllib.parse.urljoin(base_url, href)
             return href
 
     def _build(self,mo,element_store, environ):
@@ -955,8 +960,8 @@ Use of elements.WikiLink is depreciated.
         if self.path_func:
             the_path = self.path_func(self.page_name(mo))
         else:
-            the_path = urllib.quote(self.page_name(mo).encode('utf-8'))
-        return urlparse.urljoin(self.base_url, the_path)
+            the_path = urllib.parse.quote(self.page_name(mo).encode('utf-8'))
+        return urllib.parse.urljoin(self.base_url, the_path)
 
     def _build(self,mo,element_store, environ):
         if self.class_func:

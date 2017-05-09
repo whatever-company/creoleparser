@@ -3,8 +3,10 @@ or safe (``include`` doesn't guard against circular reference). For a more compl
 `the code used in the sandbox <http://code.google.com/p/urlminer/source/browse/examples/wiki/macros.py>`_.
 
 """
+from __future__ import absolute_import, unicode_literals
+from builtins import object
 import genshi.builder as bldr
-import dialects, core
+from . import dialects, core
 import os
 
 class Page(object):

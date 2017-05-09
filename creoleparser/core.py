@@ -6,7 +6,9 @@
 # This module is part of Creoleparser and is released under
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 #
-
+from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 import re
 import warnings
 
@@ -115,7 +117,7 @@ class Parser(object):
         if kwargs['method'] != "text":
             kwargs.setdefault('strip_whitespace',self.strip_whitespace)
         stream = self.generate(text, element_store, context, environ, preprocess)
-        return stream.render(**kwargs)
+        return stream.render(**kwargs).decode('utf-8')
 
     def __call__(self,text, **kwargs):
         """Wrapper for the render method. Returns final output string.

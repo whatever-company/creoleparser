@@ -6,16 +6,22 @@
 # This module is part of Creoleparser and is released under
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 #
-import urllib
+from __future__ import absolute_import, unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from builtins import object
+import urllib.request, urllib.parse, urllib.error
 import unittest
 import re
 
 from genshi import builder
 from genshi.core import Markup
 
-from core import Parser, esc_neg_look
-from dialects import creole10_base, creole11_base, create_dialect#, Creole10
-from elements import SimpleElement, IndentedBlock#, NestedIndentedBlock
+from .core import Parser, esc_neg_look
+from .dialects import creole10_base, creole11_base, create_dialect#, Creole10
+from .elements import SimpleElement, IndentedBlock#, NestedIndentedBlock
 
 base_url = ''
 inter_wiki_url = 'http://wikiohana.net/cgi-bin/wiki.pl/'
@@ -30,7 +36,7 @@ def path_name_function(page_name):
     if page_name == 'ThisPageHere':
         path = 'Special/ThisPageHere'
     else:
-        path = urllib.quote(page_name.encode('utf-8'))
+        path = urllib.parse.quote(page_name.encode('utf-8'))
     return path
 
 
@@ -762,10 +768,10 @@ class MacroTest(unittest.TestCase, BaseTest):
             '<pre>**one&lt;&lt;pre&gt;&gt;\n&lt;&lt;/pre&gt;&gt;two**</pre>\n')
         self.assertEquals(
             self.parse(u'<<mateo>>fooα<</mateo>>'),
-            wrap_result('<em>foo\xce\xb1</em>'))
+            wrap_result('<em>fooα</em>'))
         self.assertEquals(
             self.parse(u'<<steve fooα>>'),
-            wrap_result('<strong> foo\xce\xb1</strong>'))
+            wrap_result('<strong> fooα</strong>'))
         self.assertEquals(
             self.parse('<<ReverseFrag>>**foo**<</ReverseFrag>>'),
             wrap_result('**oof**'))

@@ -6,11 +6,12 @@
 # This module is part of Creoleparser and is released under
 # the MIT License: http://www.opensource.org/licenses/mit-license.php
 #
+from __future__ import absolute_import, unicode_literals
 import string
 import keyword
 
-from core import Parser, ArgParser
-from dialects import (creole11_base, creole10_base, creepy10_base,
+from .core import Parser, ArgParser
+from .dialects import (creole11_base, creole10_base, creepy10_base,
                     create_dialect, parse_args)
 
 __docformat__ = 'restructuredtext en'

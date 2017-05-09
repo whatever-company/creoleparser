@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 try:
     from setuptools import setup
 except ImportError:
-    print 'setuptools not installed, using distutils.core'
-    print 'please ignore error message about "install_requires"'
+    print('setuptools not installed, using distutils.core')
+    print('please ignore error message about "install_requires"')
     from distutils.core import setup
 
 version = '0.7.3'

@@ -1,9 +1,10 @@
+from __future__ import absolute_import, unicode_literals
+from builtins import object
 import unittest
-from string import lower
 
-from __init__ import parse_args
-from core import ArgParser
-from dialects import creepy10_base, creepy20_base
+from .__init__ import parse_args
+from .core import ArgParser
+from .dialects import creepy10_base, creepy20_base
 
 
 class BaseTest(object):
@@ -119,14 +120,14 @@ class ForceStringsTest(unittest.TestCase, BaseTest):
         self.assertEquals(
             self.parse(" [one] one  = 'oneval' foo "),
             ([['one']],{'one':'oneval foo'}))
-        
+
 
 class KeyFuncTest(unittest.TestCase, BaseTest):
     """
     """
     def setUp(self):
-        self.parse = ArgParser(creepy10_base(),key_func=lower,convert_implicit_lists=False)
-        
+        self.parse = ArgParser(creepy10_base(),key_func=lambda x: x.lower(),convert_implicit_lists=False)
+
     def test_kw_args(self):
         super(KeyFuncTest, self).test_kw_args()
         self.assertEquals(
