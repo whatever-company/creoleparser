@@ -8,7 +8,7 @@ except ImportError:
     print('please ignore error message about "install_requires"')
     from distutils.core import setup
 
-version = '0.7.3'
+version = '0.7.3.1'
 try:
     ## setup.py must work if Genshi isn't installed!
     from creoleparser import __version__
@@ -18,7 +18,7 @@ except ImportError:
 
 setup(name='Creoleparser',
       version=version,
-      install_requires=['Genshi>=0.4'],
+      install_requires=['Genshi>=0.4', 'future'],
       description='Parser for the Creole common wiki markup language',
       author='Stephen Day',
       author_email='stephen.h.day@gm**l.com',
